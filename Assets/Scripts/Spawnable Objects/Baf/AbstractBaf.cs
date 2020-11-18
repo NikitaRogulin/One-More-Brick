@@ -6,11 +6,11 @@ public abstract class AbstractBaf : SpawnableObject
 {
     private void Start()
     {
-        Player.LastBullet.AddListener(DestroyObj);
+        Player.LastBullet.AddListener(LastBulletHandler);
         // Player.LastBullet.AddListener(() => Destroy(gameObject)); НА ЗАМЕТКУ!!!
     }
 
-    protected abstract void DestroyObj();
+    protected abstract void LastBulletHandler();
 
     protected abstract void Handle(AbstractBullet bullet);
 
@@ -18,5 +18,7 @@ public abstract class AbstractBaf : SpawnableObject
     {
         if (collision.gameObject.TryGetComponent(out AbstractBullet bullet))
             Handle(bullet);
+        if (collision.gameObject.tag == "LoseBorder")
+            Destroy(gameObject);
     }
 }

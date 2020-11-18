@@ -18,7 +18,7 @@ public class BulletCloneBaf : AbstractBaf
         }
     }
 
-    protected override void DestroyObj()
+    protected override void LastBulletHandler()
     {
         buffedBullets = new List<AbstractBullet>();
         Destroy(gameObject);

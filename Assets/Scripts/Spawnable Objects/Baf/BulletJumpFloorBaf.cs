@@ -17,7 +17,7 @@ public class BulletJumpFloorBaf : AbstractBaf
             bullet.BounceCount = 3;
     }
 
-    protected override void DestroyObj()
+    protected override void LastBulletHandler()
     {
         buffedBullets = new List<AbstractBullet>();
         Destroy(gameObject);
