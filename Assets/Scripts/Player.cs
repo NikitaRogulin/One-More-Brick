@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
+        AddBulletBaf.AddBullet.AddListener(SpawnBullet);
         destination = transform.position; // назначение = место расположению 
 
         bulletsPool = new List<Bullet>();
@@ -67,21 +68,22 @@ public class Player : MonoBehaviour
             return;
         shootedBullets.Remove(bullet);
 
-        var magazineCount = 0;
+        //var magazineCount = 0;
 
-        foreach(Bullet b in bulletsPool)
-        {
-            if (!shootedBullets.Contains(b)) magazineCount++;
-        }
+        //foreach(Bullet b in bulletsPool)
+        //{
+        //    if (!shootedBullets.Contains(b)) 
+        //        magazineCount++;
+        //}
 
-        if (magazineCount == 1)
+        if (bulletsPool.Count - shootedBullets.Count == 1)
         {
             destination = new Vector3(bullet.transform.position.x, transform.position.y);// назначение = расположению пули по Х
             isFirstBulletHitFloor = true;
         }
             bullet.MoveTo(destination);
 
-        if (bulletsPool.Count == magazineCount)
+        if (shootedBullets.Count == 0)
         {
             StartCoroutine(Move(destination));
             LastBullet.Invoke();
@@ -95,7 +97,7 @@ public class Player : MonoBehaviour
             SpawnBullet();
     }
 
-    private void SpawnBullet()
+    public void SpawnBullet()
     {
         Bullet bullet = Instantiate(bulletPrefab, destination, Quaternion.identity);
         bullet.HitFloorEvent.AddListener(OnBulletHitFloor);

@@ -122,7 +122,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42a21c78d08fc9f4c939d7f684c36141, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chanceSpawn: 0.8
+  chanceSpawn: 0.9
   health: 0
 --- !u!1 &7899453438304326080
 GameObject:

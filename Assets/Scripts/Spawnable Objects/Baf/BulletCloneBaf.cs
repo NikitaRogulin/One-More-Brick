@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class BulletCloneBaf : AbstractBaf
 {
-    private static List<AbstractBullet> buffedBullets = new List<AbstractBullet>();
+    private  List<AbstractBullet> buffedBullets = new List<AbstractBullet>();
 
     [SerializeField] private CloneBullet cloneBulletPrefab;
     protected override void Handle(AbstractBullet bullet)

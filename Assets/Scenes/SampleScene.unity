@@ -312,6 +312,9 @@ MonoBehaviour:
   - {fileID: 44960939678683102, guid: 3e5ccfc874aa7e34780bfb57787d78c4, type: 3}
   - {fileID: 6014747938925766087, guid: 730c69d5b083bbf439876ae60a7a8be6, type: 3}
   - {fileID: 6058802384783256675, guid: 92246a4c5d6c79648a907b5b9ecd6c63, type: 3}
+  - {fileID: 6793440248603819294, guid: 189b3965444328c45b50ca2b69269258, type: 3}
+  - {fileID: 6654875352114761347, guid: 4bec8295753f8164b9d1a78adcfee133, type: 3}
+  - {fileID: 8591907434262357611, guid: 5cc0e40ccd08bd54db017378880c4cc2, type: 3}
   block: {fileID: 7899453438277103755, guid: 187789761617c744987009ea60f8202e, type: 3}
   margin: 0.1
 --- !u!4 &411504580
@@ -421,7 +424,6 @@ GameObject:
   m_Component:
   - component: {fileID: 525551924}
   - component: {fileID: 525551923}
-  - component: {fileID: 525551925}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -456,18 +458,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &525551925
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 525551922}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eaa79d66557d4d149a4ea5f224fdb4a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &705245786
 GameObject:
   m_ObjectHideFlags: 0

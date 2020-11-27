@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CloneBullet : AbstractBullet
+public class ImpactRay : MonoBehaviour
 {
-    protected override void BounceCountZero()
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         Destroy(gameObject);
     }
