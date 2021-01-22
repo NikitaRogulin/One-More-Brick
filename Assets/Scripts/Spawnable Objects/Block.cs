@@ -10,12 +10,22 @@ public class Block : SpawnableObject
     private Text blockHP;
     [SerializeField] private int health;
 
+    private int Health
+    {
+        get => health;
+        set
+        {
+            health = value;
+            CurrentHp();
+        }
+    }
+
     private void Start()
     {
-        health = HPBlockController.StartHP;
-
+        //health = HPBlockController.StartHP;
+        Health = HPBlockController.StartHP;
         blockHP = GetComponentInChildren<Text>();
-        CurrentHp();
+        //CurrentHp();
     }
 
     private void Update()
@@ -28,10 +38,14 @@ public class Block : SpawnableObject
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        health--;
-        CurrentHp();
-        if (health == 0)
-            Destroy(gameObject);
+        Health--;
+        //health--;
+        //CurrentHp();
+        if (Health == 0)
+        {
+            isFree = true;
+            gameObject.SetActive(false);
+        }      
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -41,6 +55,14 @@ public class Block : SpawnableObject
 
     private void CurrentHp()
     {
-        blockHP.text = health.ToString();
+        blockHP = GetComponentInChildren<Text>();
+        blockHP.text = Health.ToString();
+    }
+
+    public override void ResetPoolable()
+    {
+        Health = HPBlockController.StartHP;
+        //health = HPBlockController.StartHP;
+        //CurrentHp();
     }
 }

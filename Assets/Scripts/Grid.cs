@@ -26,7 +26,7 @@ public class Grid : MonoBehaviour
     {
     }
 
-    void SpawnLine()
+    public void SpawnLine()
     {
         List<Cell> freePositions = new List<Cell>();
 
@@ -47,7 +47,28 @@ public class Grid : MonoBehaviour
         freePositions.Clear();
     }
 
-    void AddBasePosition()
+    public void ShiftDown()
+    {
+        for (int i = maxCountRows - 1; i > 0; i--) // с последней строки
+        {
+            for (int j = 0; j < maxCountColumns; j++) //
+            {
+                Cell from = basePositions[i - 1, j];
+                Cell to = basePositions[i, j];
+
+                GameObject gameObj = from.CurrentObj;
+
+                if (gameObj != null)
+                {
+                    gameObj.transform.position = to.transform.position;
+                    to.CurrentObj = gameObj;
+                    from.CurrentObj = null;
+                }
+            }
+        }
+    }
+
+    private void AddBasePosition()
     {
         basePositions = new Cell[maxCountRows, maxCountColumns];
 
@@ -95,26 +116,5 @@ public class Grid : MonoBehaviour
         }
 
         return selected;
-    }
-
-    private void ShiftDown()
-    {
-        for (int i = maxCountRows - 1; i > 0; i--) // с последней строки
-        {
-            for (int j = 0; j < maxCountColumns; j++) //
-            {
-                Cell from = basePositions[i - 1, j];
-                Cell to = basePositions[i, j];
-
-                GameObject gameObj = from.CurrentObj;
-
-                if (gameObj != null)
-                {
-                    gameObj.transform.position = to.transform.position;
-                    to.CurrentObj = gameObj;
-                    from.CurrentObj = null;
-                }
-            }
-        }
     }
 }

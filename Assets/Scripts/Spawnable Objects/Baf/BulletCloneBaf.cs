@@ -5,25 +5,34 @@ using UnityEngine;
 
 public class BulletCloneBaf : AbstractBaf
 {
-    private  List<AbstractBullet> buffedBullets = new List<AbstractBullet>();
+    private List<AbstractBullet> buffedBullets = new List<AbstractBullet>();
 
     [SerializeField] private CloneBullet cloneBulletPrefab;
+    private static Pool<CloneBullet> cloneBulletsPool;
+
     protected override void Handle(AbstractBullet bullet)
     {
+        cloneBulletsPool = new Pool<CloneBullet>(() => Instantiate(cloneBulletPrefab));
         if (!(bullet is CloneBullet) && !buffedBullets.Contains(bullet))
         {
+            CloneBullet cloneBullet = cloneBulletsPool.GetPoolable();
             buffedBullets.Add(bullet);
-            AbstractBullet newBullet = Instantiate(cloneBulletPrefab, transform.position, Quaternion.identity);
-            newBullet.Push(new Vector3(Random.Range(0f, 1f) > 0.5f ? 1 : -1, Random.Range(0f, 1f) > 0.5f ? 1 : -1));
+            cloneBullet.Push(new Vector3(Random.Range(0f, 1f) > 0.5f ? 1 : -1, Random.Range(0f, 1f) > 0.5f ? 1 : -1));
         }
     }
 
     protected override void LastBulletHandler()
     {
         buffedBullets = new List<AbstractBullet>();
-        Destroy(gameObject);
+        gameObject.SetActive(false);
+        isFree = true;
     }
-    
+
+    public override void ResetPoolable()
+    {
+        
+    }
+
     //private int RandomFromRangeWithExceptions(int rangeMin, int rangeMax, params int[] exclude)
     //{
     //    var range = Enumerable.Range(rangeMin, rangeMax).Where(i => !exclude.Contains(i)); // плохой вариант!

@@ -7,10 +7,16 @@ public class AddBulletBaf : AbstractBaf
 {
     public static UnityEvent AddBullet = new UnityEvent();
 
+    public override void ResetPoolable()
+    {
+        
+    }
+
     protected override void Handle(AbstractBullet bullet)
     {
         AddBullet.Invoke();
-        Destroy(gameObject);
+        gameObject.SetActive(false);
+        isFree = true;
     }
 
     protected override void LastBulletHandler()

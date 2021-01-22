@@ -9,11 +9,17 @@ public class HorizontalDamageBaf : AbstractBaf
 
     protected override void LastBulletHandler()
     {
-        Destroy(gameObject);
+        gameObject.SetActive(false);
+        isFree = true;
     }
 
     protected override void Handle(AbstractBullet bullet)
     {
         Instantiate(dmgLinePrefab, transform.position, Quaternion.identity);
+    }
+
+    public override void ResetPoolable()
+    {
+        
     }
 }

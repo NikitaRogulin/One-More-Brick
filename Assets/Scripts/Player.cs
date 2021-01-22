@@ -6,24 +6,54 @@ using UnityEngine.Events;
 public class Player : MonoBehaviour
 {
     [SerializeField] private Bullet bulletPrefab;
-    [SerializeField] private int startBulletsCount;
+    [SerializeField] private int currentBulletsCount;
 
-    private List<Bullet> shootedBullets;// выстреленные пули
-    private List<Bullet> bulletsPool; //все пули
+    private List<Bullet> shootedBullets; // выстреленные пули
+    private Pool<Bullet> bullets;
     private Vector3 destination; // назначение 
     private bool canShoot = true;
     private bool isFirstBulletHitFloor;
 
-    public static UnityEvent LastBullet = new UnityEvent(); 
+    public static UnityEvent LastBullet = new UnityEvent();
+
+    //состояния игры:
+    //спаун игровых объектов
+    //проигрыш
+    //первая пуля приземлилась
+    //конец хода
+    //удаление игровых объектов
+    //ожидание
+
+    //ожидание <-> спаун игровых объектов
+    //ожидание -> последняя пуля призмелилась
+    //первая пуля приземлилась -> ожидание
+    //первая пуля призмелилась -> конец хода
+    //конец хода -> спаун игровых объектов
+    //конец хода -> проигрыш
+
+
+    //состояния:
+    //в движении
+    //ожидает
+    //стреляющий
+
+    //ожидает -> стреляющий (триггер - нажата лкм)    
+    //ожидает -> в движении (триггер - первая пуля приземлилась)
+    //стреляющий -> ожидает (триггер - пули закончились)
+    //в движении -> ожидает (триггер - дошел до точки назначения)
+
+    //действия:
+    //стрелять
+    //двигаться
 
     void Start()
     {
-        AddBulletBaf.AddBullet.AddListener(SpawnBullet);
-        destination = transform.position; // назначение = место расположению 
+        AddBulletBaf.AddBullet.AddListener(() => currentBulletsCount++);
 
-        bulletsPool = new List<Bullet>();
+        destination = transform.position; // назначение = место расположению 
+        bullets = new Pool<Bullet>(()=>Instantiate(bulletPrefab,transform.position,Quaternion.identity));
         shootedBullets = new List<Bullet>();
-        SpawnBullets(startBulletsCount);
+        //SpawnBullets(startBulletsCount);
     }
 
     void Update()
@@ -32,7 +62,6 @@ public class Player : MonoBehaviour
         {
             Vector3 mousePosInWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector3 direction = new Vector3(mousePosInWorld.x - transform.position.x, mousePosInWorld.y - transform.position.y,0).normalized;
-
             StartCoroutine(Shoot(direction));
         }
     }
@@ -41,13 +70,15 @@ public class Player : MonoBehaviour
     {
         isFirstBulletHitFloor = false;
         canShoot = false;
-        var bulletCount = bulletsPool.Count;
-        for (; bulletCount > 0; bulletCount--)
+
+        int buffer = currentBulletsCount;
+        for (int i = 0; i < buffer; i++)
         {
-            Bullet bullet = bulletsPool[bulletCount-1];
-            bullet.gameObject.SetActive(true);// делаем пулю активной при выстреле 
+            Bullet bullet = bullets.GetPoolable();
+            bullet.gameObject.SetActive(true);
             bullet.Push(direction);
             shootedBullets.Add(bullet);
+            bullet.HitFloorEvent.AddListener(OnBulletHitFloor);
             yield return new WaitForSeconds(0.1f);
         }
     }
@@ -64,55 +95,42 @@ public class Player : MonoBehaviour
 
     private void OnBulletHitFloor(Bullet bullet)
     {
-        if (!shootedBullets.Contains(bullet))
-            return;
+        //bullet.HitFloorEvent.RemoveListener(OnBulletHitFloor);
         shootedBullets.Remove(bullet);
 
-        //var magazineCount = 0;
-
-        //foreach(Bullet b in bulletsPool)
-        //{
-        //    if (!shootedBullets.Contains(b)) 
-        //        magazineCount++;
-        //}
-
-        if (bulletsPool.Count - shootedBullets.Count == 1)
+        if (currentBulletsCount - shootedBullets.Count == 1)
         {
             destination = new Vector3(bullet.transform.position.x, transform.position.y);// назначение = расположению пули по Х
             isFirstBulletHitFloor = true;
         }
-            bullet.MoveTo(destination);
+
+        bullet.CollectTo(destination);
+        bullet.HitFloorEvent.RemoveListener(OnBulletHitFloor);
 
         if (shootedBullets.Count == 0)
         {
-            StartCoroutine(Move(destination));
-            LastBullet.Invoke();
-            SpawnBullet();
+            EndTurn();
         }
-    }
-
-    private void SpawnBullets(int count)
-    {
-        for (int i = 0; i < count; i++)
-            SpawnBullet();
-    }
-
-    public void SpawnBullet()
-    {
-        Bullet bullet = Instantiate(bulletPrefab, destination, Quaternion.identity);
-        bullet.HitFloorEvent.AddListener(OnBulletHitFloor);
-        bulletsPool.Add(bullet);//добавляет пулю во все
     }
 
     public void CollectBullets()
     {
         if (canShoot || !isFirstBulletHitFloor)
             return;
-        int count = bulletsPool.Count;
-        for (int i = 0; i < count; i++)
+
+        for (int i = 0; i < shootedBullets.Count; i++)
         {
-            Bullet bullet = bulletsPool[i];
-            OnBulletHitFloor(bullet);
+            Bullet bullet = shootedBullets[i];
+            bullet.CollectTo(destination);
         }
+        EndTurn();
+    }
+
+    private void EndTurn()
+    {
+        StartCoroutine(Move(destination));
+        LastBullet.Invoke();
+        currentBulletsCount++;
+        shootedBullets.Clear();
     }
 }

@@ -29,11 +29,14 @@ public abstract class AbstractBullet : MonoBehaviour, IPoolable
             BounceCount--;
 
             if (BounceCount == 0)
+            {
                 BounceCountZero();
+                isFree = true;
+            }
         }
     }
 
-    public void ResetPoolable()
+    public virtual void ResetPoolable()
     {
         BounceCount = 1;
     }

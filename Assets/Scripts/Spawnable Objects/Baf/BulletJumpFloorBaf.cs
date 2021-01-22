@@ -8,6 +8,11 @@ public class BulletJumpFloorBaf : AbstractBaf
     private static List<AbstractBullet> buffedBullets = new List<AbstractBullet>();
     private bool isFired;
 
+    public override void ResetPoolable()
+    {
+        isFired = false;
+    }
+
     protected override void Handle(AbstractBullet bullet)
     {
         if (!buffedBullets.Contains(bullet))
@@ -22,7 +27,8 @@ public class BulletJumpFloorBaf : AbstractBaf
         if (isFired)
         {
             buffedBullets = new List<AbstractBullet>();
-            Destroy(gameObject);
+            gameObject.SetActive(false);
+            isFree = true;
         }
     }
 }

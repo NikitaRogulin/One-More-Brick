@@ -1010,7 +1010,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 8584617211091004650, guid: 8230184d52af9254283e0899b874f280,
     type: 3}
-  startBulletsCount: 1
+  currentBulletsCount: 1
 --- !u!1 &2141933708
 GameObject:
   m_ObjectHideFlags: 0

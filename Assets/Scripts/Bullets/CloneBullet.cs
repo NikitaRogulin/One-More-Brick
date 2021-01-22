@@ -6,6 +6,6 @@ public class CloneBullet : AbstractBullet
 {
     protected override void BounceCountZero()
     {
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 }
