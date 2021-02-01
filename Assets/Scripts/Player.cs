@@ -8,43 +8,14 @@ public class Player : MonoBehaviour
     [SerializeField] private Bullet bulletPrefab;
     [SerializeField] private int currentBulletsCount;
 
-    private List<Bullet> shootedBullets; // выстреленные пули
+    private int shootedBullets; // выстреленные пули
     private Pool<Bullet> bullets;
     private Vector3 destination; // назначение 
     private bool canShoot = true;
     private bool isFirstBulletHitFloor;
 
-    public static UnityEvent LastBullet = new UnityEvent();
-
-    //состояния игры:
-    //спаун игровых объектов
-    //проигрыш
-    //первая пуля приземлилась
-    //конец хода
-    //удаление игровых объектов
-    //ожидание
-
-    //ожидание <-> спаун игровых объектов
-    //ожидание -> последняя пуля призмелилась
-    //первая пуля приземлилась -> ожидание
-    //первая пуля призмелилась -> конец хода
-    //конец хода -> спаун игровых объектов
-    //конец хода -> проигрыш
-
-
-    //состояния:
-    //в движении
-    //ожидает
-    //стреляющий
-
-    //ожидает -> стреляющий (триггер - нажата лкм)    
-    //ожидает -> в движении (триггер - первая пуля приземлилась)
-    //стреляющий -> ожидает (триггер - пули закончились)
-    //в движении -> ожидает (триггер - дошел до точки назначения)
-
-    //действия:
-    //стрелять
-    //двигаться
+    public UnityEvent LastBullet = new UnityEvent();
+    private UnityEvent BulletsCollected = new UnityEvent();
 
     void Start()
     {
@@ -52,7 +23,6 @@ public class Player : MonoBehaviour
 
         destination = transform.position; // назначение = место расположению 
         bullets = new Pool<Bullet>(()=>Instantiate(bulletPrefab,transform.position,Quaternion.identity));
-        shootedBullets = new List<Bullet>();
         //SpawnBullets(startBulletsCount);
     }
 
@@ -72,12 +42,14 @@ public class Player : MonoBehaviour
         canShoot = false;
 
         int buffer = currentBulletsCount;
+        shootedBullets = currentBulletsCount;
+
         for (int i = 0; i < buffer; i++)
         {
             Bullet bullet = bullets.GetPoolable();
             bullet.gameObject.SetActive(true);
             bullet.Push(direction);
-            shootedBullets.Add(bullet);
+            BulletsCollected.AddListener(() => bullet.CollectTo(destination));
             bullet.HitFloorEvent.AddListener(OnBulletHitFloor);
             yield return new WaitForSeconds(0.1f);
         }
@@ -96,9 +68,9 @@ public class Player : MonoBehaviour
     private void OnBulletHitFloor(Bullet bullet)
     {
         //bullet.HitFloorEvent.RemoveListener(OnBulletHitFloor);
-        shootedBullets.Remove(bullet);
+        shootedBullets--;
 
-        if (currentBulletsCount - shootedBullets.Count == 1)
+        if (currentBulletsCount - shootedBullets == 1)
         {
             destination = new Vector3(bullet.transform.position.x, transform.position.y);// назначение = расположению пули по Х
             isFirstBulletHitFloor = true;
@@ -107,7 +79,7 @@ public class Player : MonoBehaviour
         bullet.CollectTo(destination);
         bullet.HitFloorEvent.RemoveListener(OnBulletHitFloor);
 
-        if (shootedBullets.Count == 0)
+        if (shootedBullets == 0)
         {
             EndTurn();
         }
@@ -118,11 +90,9 @@ public class Player : MonoBehaviour
         if (canShoot || !isFirstBulletHitFloor)
             return;
 
-        for (int i = 0; i < shootedBullets.Count; i++)
-        {
-            Bullet bullet = shootedBullets[i];
-            bullet.CollectTo(destination);
-        }
+        BulletsCollected.Invoke();
+        BulletsCollected.RemoveAllListeners();
+
         EndTurn();
     }
 
@@ -131,6 +101,5 @@ public class Player : MonoBehaviour
         StartCoroutine(Move(destination));
         LastBullet.Invoke();
         currentBulletsCount++;
-        shootedBullets.Clear();
     }
 }

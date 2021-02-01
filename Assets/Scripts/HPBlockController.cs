@@ -11,11 +11,10 @@ public class HPBlockController : MonoBehaviour
 
     private void Start()
     {
-        Player.LastBullet.AddListener(HpUp);
         startHp = startHpSerialize;
     }
 
-    private void HpUp()
+    public void HpUp()
     {
         startHp++;
     }

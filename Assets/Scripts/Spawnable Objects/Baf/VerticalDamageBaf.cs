@@ -5,7 +5,7 @@ using UnityEngine;
 public class VerticalDamageBaf : AbstractBaf
 {
     [SerializeField] private GameObject dmgLinePrefab;
-    protected override void LastBulletHandler()
+    public override void OnTurnEnd()
     {
         gameObject.SetActive(false);
         isFree = true;

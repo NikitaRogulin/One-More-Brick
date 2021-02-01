@@ -6,11 +6,8 @@ public abstract class AbstractBaf : SpawnableObject
 {
     private void Start()
     {
-        Player.LastBullet.AddListener(LastBulletHandler);
         // Player.LastBullet.AddListener(() => Destroy(gameObject)); НА ЗАМЕТКУ!!!
     }
-
-    protected abstract void LastBulletHandler();
 
     protected abstract void Handle(AbstractBullet bullet);
 

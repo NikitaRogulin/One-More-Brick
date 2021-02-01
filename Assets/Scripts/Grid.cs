@@ -1,23 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Grid : MonoBehaviour
 {
     [SerializeField] private List<SpawnableObject> gamePrefabs;
     [SerializeField] private Block block;
-
     [SerializeField] private float margin; // отсутп
 
     private Cell[,] basePositions; // двумерный массив клеток (базовые позиции)
     private const int maxCountColumns = 13; // колонны
     private const int maxCountRows = 8; // строки
 
+    private UnityEvent TurnEnd = new UnityEvent();
 
     void Start()
     {
-        Player.LastBullet.AddListener(ShiftDown);
-        Player.LastBullet.AddListener(SpawnLine); // спаун подписываем на эвент
+        //Player.LastBullet.AddListener(ShiftDown);
+        //Player.LastBullet.AddListener(SpawnLine); // спаун подписываем на эвент
         AddBasePosition();
         SpawnLine();
     }
@@ -41,6 +42,8 @@ public class Grid : MonoBehaviour
             Cell freeCell = freePositions[indexFreePos];
 
             SpawnableObject spawned = Instantiate(GetRandomByWeight(gamePrefabs), freeCell.transform.position, Quaternion.identity);
+            TurnEnd.AddListener(spawned.OnTurnEnd);
+
             freeCell.CurrentObj = spawned.gameObject;
             freePositions.RemoveAt(indexFreePos);
         }
@@ -66,6 +69,11 @@ public class Grid : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void OnTurnEnd()
+    {
+        TurnEnd.Invoke();
     }
 
     private void AddBasePosition()

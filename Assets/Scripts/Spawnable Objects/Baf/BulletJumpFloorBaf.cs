@@ -22,7 +22,7 @@ public class BulletJumpFloorBaf : AbstractBaf
         }   
     }
 
-    protected override void LastBulletHandler()
+    public override void OnTurnEnd()
     {
         if (isFired)
         {

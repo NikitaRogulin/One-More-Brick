@@ -65,4 +65,9 @@ public class Block : SpawnableObject
         //health = HPBlockController.StartHP;
         //CurrentHp();
     }
+
+    public override void OnTurnEnd()
+    {
+        
+    }
 }

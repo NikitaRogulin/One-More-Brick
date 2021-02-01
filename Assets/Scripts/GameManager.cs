@@ -7,12 +7,28 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private Text text;
     private int score;
+    [SerializeField] private HPBlockController hPBlockController;
+    [SerializeField] private Text text;
+    [SerializeField] private Player player;
+    [SerializeField] private Grid grid;
+
+    public UnityEvent TurnEnded = new UnityEvent();
 
     void Start()
     {
-        Player.LastBullet.AddListener(AddScore);
+        TurnEnded.AddListener(grid.OnTurnEnd);
+        TurnEnded.AddListener(hPBlockController.HpUp);
+        TurnEnded.AddListener(grid.ShiftDown);
+        TurnEnded.AddListener(grid.SpawnLine);
+        player.LastBullet.AddListener(OnTurnEnd);
+        //TurnEnded.AddListener(AddScore);
+    }
+
+    void OnTurnEnd()
+    {
+        TurnEnded.Invoke();
+        AddScore();
     }
 
     private void AddScore()

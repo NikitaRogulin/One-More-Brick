@@ -12,7 +12,7 @@ public class BulletCloneBaf : AbstractBaf
 
     protected override void Handle(AbstractBullet bullet)
     {
-        cloneBulletsPool = new Pool<CloneBullet>(() => Instantiate(cloneBulletPrefab));
+        cloneBulletsPool = new Pool<CloneBullet>(() => Instantiate(cloneBulletPrefab, transform.position, Quaternion.identity));
         if (!(bullet is CloneBullet) && !buffedBullets.Contains(bullet))
         {
             CloneBullet cloneBullet = cloneBulletsPool.GetPoolable();
@@ -21,7 +21,7 @@ public class BulletCloneBaf : AbstractBaf
         }
     }
 
-    protected override void LastBulletHandler()
+    public override void OnTurnEnd()
     {
         buffedBullets = new List<AbstractBullet>();
         gameObject.SetActive(false);

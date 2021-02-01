@@ -19,7 +19,7 @@ public class AddBulletBaf : AbstractBaf
         isFree = true;
     }
 
-    protected override void LastBulletHandler()
+    public override void OnTurnEnd()
     {
         
     }
