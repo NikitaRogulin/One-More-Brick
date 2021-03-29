@@ -111,6 +111,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eda3b8498ab9c30448919aff50a5f5f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chanceSpawn: 1
+  chanceSpawn: 0.03
   cloneBulletPrefab: {fileID: 104876578893681512, guid: 123c1244b1fedb94396dbbc9eb846e23,
     type: 3}
